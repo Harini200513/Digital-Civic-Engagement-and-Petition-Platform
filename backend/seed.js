@@ -54,7 +54,10 @@ const run = async () => {
     if (!poll) {
       poll = new Poll({
         title: 'Demo Poll',
+        description: 'This is a demo poll to gather citizens\' opinions.',
+        targetLocation: 'DemoCity',
         options: [{ label: 'Yes' }, { label: 'No' }],
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Expires in 30 days
         createdBy: user._id
       });
       await poll.save();
