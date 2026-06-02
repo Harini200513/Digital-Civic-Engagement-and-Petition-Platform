@@ -13,15 +13,13 @@ app.use(securityHeaders);
 
 // CORS configuration
 const allowedOrigins = [
-  (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, ''),
-  (process.env.ADMIN_PANEL_URL || 'http://localhost:5050').replace(/\/$/, ''),
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  process.env.ADMIN_PANEL_URL || 'http://localhost:5050',
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    console.log('CORS Request - Origin:', origin);
-    console.log('CORS Request - Allowed Origins:', allowedOrigins);
-    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
@@ -146,17 +144,17 @@ app.get("/api", (req, res) => {
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
-
+  
   // Multer file upload errors
   if (error.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({
+    return res.status(400).json({ 
       message: 'File too large. Maximum size is 10MB.',
       code: 'FILE_TOO_LARGE'
     });
   }
-
+  
   if (error.code === 'LIMIT_FILE_COUNT') {
-    return res.status(400).json({
+    return res.status(400).json({ 
       message: 'Too many files. Maximum is 5 files per request.',
       code: 'TOO_MANY_FILES'
     });
@@ -164,7 +162,7 @@ app.use((error, req, res, next) => {
 
   // MongoDB errors
   if (error.name === 'ValidationError') {
-    return res.status(400).json({
+    return res.status(400).json({ 
       message: 'Validation error',
       errors: Object.values(error.errors).map(e => e.message),
       code: 'VALIDATION_ERROR'
@@ -172,14 +170,14 @@ app.use((error, req, res, next) => {
   }
 
   if (error.code === 11000) {
-    return res.status(400).json({
+    return res.status(400).json({ 
       message: 'Duplicate entry',
       code: 'DUPLICATE_ENTRY'
     });
   }
 
   // Default error response
-  res.status(500).json({
+  res.status(500).json({ 
     message: 'Internal server error',
     code: 'INTERNAL_ERROR'
   });
@@ -187,7 +185,7 @@ app.use((error, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({
+  res.status(404).json({ 
     message: 'Endpoint not found',
     code: 'NOT_FOUND',
     path: req.originalUrl
