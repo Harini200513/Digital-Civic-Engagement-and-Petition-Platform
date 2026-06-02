@@ -19,6 +19,8 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('CORS Request - Origin:', origin);
+    console.log('CORS Request - Allowed Origins:', allowedOrigins);
     if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
       return callback(null, true);
     }
